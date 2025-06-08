@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Target, TrendingUp, Award, Book, Dumbbell, Eye, Users, CheckCircle, Circle, RotateCcw } from 'lucide-react';
+import { Calendar, Target, TrendingUp, Award, Book, Dumbbell, Eye, Users, CheckCircle, Circle, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const BatmanHabitTracker = () => {
   const [currentPhase, setCurrentPhase] = useState(1);
@@ -51,28 +51,8 @@ const BatmanHabitTracker = () => {
     }
   };
 
-  const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab', 'Dom'];
-
-  useEffect(() => {
-    const savedData = localStorage.getItem('batmanHabits');
-    if (savedData) {
-      const parsed = JSON.parse(savedData);
-      setHabits(parsed.habits || {});
-      setStats(parsed.stats || { totalPoints: 0, streak: 0, bestWeek: 0 });
-      setCurrentPhase(parsed.currentPhase || 1);
-      setCurrentWeek(parsed.currentWeek || 1);
-    }
-  }, []);
-
-  useEffect(() => {
-    const dataToSave = {
-      habits,
-      stats,
-      currentPhase,
-      currentWeek
-    };
-    localStorage.setItem('batmanHabits', JSON.stringify(dataToSave));
-  }, [habits, stats, currentPhase, currentWeek]);
+  const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  const fullDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab', 'Dom'];
 
   const getWeekKey = () => `phase${currentPhase}-week${currentWeek}`;
   
@@ -159,81 +139,84 @@ const BatmanHabitTracker = () => {
   const progress = getWeekProgress();
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 relative overflow-hidden">
-      {/* Gotham City Skyline Background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-gray-900 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 w-16 h-32 bg-gray-800 transform skew-x-12"></div>
-        <div className="absolute bottom-0 left-20 w-12 h-48 bg-gray-700"></div>
-        <div className="absolute bottom-0 left-36 w-20 h-40 bg-gray-800 transform -skew-x-6"></div>
-        <div className="absolute bottom-0 right-0 w-24 h-56 bg-gray-700 transform skew-x-3"></div>
-        <div className="absolute bottom-0 right-28 w-16 h-44 bg-gray-800"></div>
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Gotham City Skyline Background - Adjusted for mobile */}
+      <div className="absolute inset-0 opacity-5 sm:opacity-10">
+        <div className="absolute bottom-0 left-0 w-full h-32 sm:h-64 bg-gradient-to-t from-gray-900 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-8 sm:w-16 h-16 sm:h-32 bg-gray-800 transform skew-x-12"></div>
+        <div className="absolute bottom-0 left-10 sm:left-20 w-6 sm:w-12 h-24 sm:h-48 bg-gray-700"></div>
+        <div className="absolute bottom-0 left-20 sm:left-36 w-10 sm:w-20 h-20 sm:h-40 bg-gray-800 transform -skew-x-6"></div>
+        <div className="absolute bottom-0 right-0 w-12 sm:w-24 h-28 sm:h-56 bg-gray-700 transform skew-x-3"></div>
+        <div className="absolute bottom-0 right-16 sm:right-28 w-8 sm:w-16 h-22 sm:h-44 bg-gray-800"></div>
       </div>
       
-      <div className="max-w-6xl mx-auto relative z-10">
-        {/* Header */}
-        <div className="text-center mb-8 relative">
+      <div className="max-w-6xl mx-auto relative z-10 p-3 sm:p-4">
+        {/* Header - Mobile optimized */}
+        <div className="text-center mb-6 sm:mb-8 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent h-px top-1/2"></div>
-          <h1 className="text-5xl font-bold mb-4 relative">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4 relative">
             <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent font-black tracking-wider">
               ⚡ BATMAN ⚡
             </span>
             <br />
-            <span className="text-2xl bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent font-light tracking-widest">
+            <span className="text-lg sm:text-2xl bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent font-light tracking-widest">
               HABIT PROTOCOL
             </span>
           </h1>
-          <div className="bg-black/80 border border-yellow-400/30 rounded-lg p-4 backdrop-blur-sm shadow-2xl shadow-yellow-400/20">
-            <p className="text-yellow-400 text-lg font-medium italic">
+          <div className="bg-black/80 border border-yellow-400/30 rounded-lg p-3 sm:p-4 backdrop-blur-sm shadow-2xl shadow-yellow-400/20">
+            <p className="text-yellow-400 text-sm sm:text-lg font-medium italic">
               "No es quien soy por dentro, sino lo que hago, lo que me define"
             </p>
-            <p className="text-gray-400 text-sm mt-2">- Bruce Wayne</p>
+            <p className="text-gray-400 text-xs sm:text-sm mt-2">- Bruce Wayne</p>
           </div>
         </div>
 
-        {/* Phase Navigation */}
-        <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-6 mb-6 backdrop-blur-sm shadow-2xl shadow-yellow-400/10 relative overflow-hidden">
+        {/* Phase Navigation - Mobile optimized */}
+        <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 backdrop-blur-sm shadow-2xl shadow-yellow-400/10 relative overflow-hidden">
           {/* Bat symbol watermark */}
-          <div className="absolute top-2 right-2 text-6xl opacity-5">🦇</div>
+          <div className="absolute top-2 right-2 text-4xl sm:text-6xl opacity-5">🦇</div>
           
           <div className="flex items-center justify-between mb-4">
             <button 
               onClick={prevWeek}
-              className="p-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-yellow-400/20 hover:to-yellow-600/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg hover:shadow-yellow-400/20"
+              className="p-2 sm:p-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-yellow-400/20 hover:to-yellow-600/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg hover:shadow-yellow-400/20 text-xs sm:text-sm"
               disabled={currentPhase === 1 && currentWeek === 1}
             >
-              ◀ PREV
+              <ChevronLeft className="w-4 h-4 sm:hidden" />
+              <span className="hidden sm:inline">◀ PREV</span>
             </button>
             
-            <div className="text-center">
-              <h2 className="text-3xl font-black text-yellow-400 tracking-wider mb-1 drop-shadow-lg">
-                MISSION {currentPhase}: {currentPhaseData.name}
+            <div className="text-center flex-1 px-2">
+              <h2 className="text-lg sm:text-3xl font-black text-yellow-400 tracking-wider mb-1 drop-shadow-lg">
+                <span className="block sm:inline">MISSION {currentPhase}:</span>
+                <span className="block sm:inline sm:ml-2">{currentPhaseData.name}</span>
               </h2>
-              <p className="text-gray-300 font-medium tracking-wide">
+              <p className="text-gray-300 font-medium tracking-wide text-xs sm:text-base">
                 WEEK {currentWeek} • PROTOCOL {currentPhaseData.weeks}
               </p>
             </div>
             
             <button 
               onClick={nextWeek}
-              className="p-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-yellow-400/20 hover:to-yellow-600/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg hover:shadow-yellow-400/20"
+              className="p-2 sm:p-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-yellow-400/20 hover:to-yellow-600/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg hover:shadow-yellow-400/20 text-xs sm:text-sm"
               disabled={currentPhase === 3 && currentWeek === 4}
             >
-              NEXT ▶
+              <ChevronRight className="w-4 h-4 sm:hidden" />
+              <span className="hidden sm:inline">NEXT ▶</span>
             </button>
           </div>
 
           {/* Progress Bar */}
           <div className="mb-4">
-            <div className="flex justify-between text-sm mb-2 font-semibold">
-              <span className="text-yellow-400">WEEKLY PROGRESS: {progress.points}/{progress.goal} POINTS</span>
+            <div className="flex justify-between text-xs sm:text-sm mb-2 font-semibold">
+              <span className="text-yellow-400">PROGRESS: {progress.points}/{progress.goal}</span>
               <span className={progress.percentage >= 100 ? 'text-green-400 font-bold' : 'text-yellow-400'}>
-                {progress.percentage}% COMPLETE
+                {progress.percentage}%
               </span>
             </div>
-            <div className="w-full bg-gray-900 rounded-full h-4 border border-yellow-400/30 overflow-hidden">
+            <div className="w-full bg-gray-900 rounded-full h-3 sm:h-4 border border-yellow-400/30 overflow-hidden">
               <div 
-                className={`h-4 rounded-full transition-all duration-700 ${
+                className={`h-3 sm:h-4 rounded-full transition-all duration-700 ${
                   progress.percentage >= 100 
                     ? 'bg-gradient-to-r from-green-400 to-green-600 shadow-lg shadow-green-400/50' 
                     : 'bg-gradient-to-r from-yellow-400 to-yellow-600 shadow-lg shadow-yellow-400/50'
@@ -242,29 +225,82 @@ const BatmanHabitTracker = () => {
               ></div>
             </div>
             {progress.percentage >= 100 && (
-              <div className="text-center mt-2 text-green-400 font-bold animate-pulse">
+              <div className="text-center mt-2 text-green-400 font-bold animate-pulse text-sm">
                 🏆 MISSION ACCOMPLISHED! 🏆
               </div>
             )}
           </div>
         </div>
 
-        {/* Habit Grid */}
-        <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-6 mb-6 backdrop-blur-sm shadow-2xl shadow-yellow-400/10 relative">
-          {/* Wayne Enterprises Style Header */}
-          <div className="text-center mb-6 border-b border-yellow-400/30 pb-4">
-            <h3 className="text-2xl font-black text-yellow-400 tracking-widest">
-              TRAINING PROTOCOL MATRIX
+        {/* Habit Grid - Mobile Card Layout */}
+        <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-3 sm:p-6 mb-4 sm:mb-6 backdrop-blur-sm shadow-2xl shadow-yellow-400/10 relative">
+          {/* Header */}
+          <div className="text-center mb-4 sm:mb-6 border-b border-yellow-400/30 pb-4">
+            <h3 className="text-lg sm:text-2xl font-black text-yellow-400 tracking-widest">
+              TRAINING PROTOCOL
             </h3>
-            <p className="text-gray-400 text-sm mt-1 font-medium">CLASSIFIED • WAYNE ENTERPRISES</p>
+            <p className="text-gray-400 text-xs sm:text-sm mt-1 font-medium">CLASSIFIED • WAYNE ENTERPRISES</p>
           </div>
           
-          <div className="overflow-x-auto">
+          {/* Mobile: Card Layout, Desktop: Table Layout */}
+          <div className="block sm:hidden space-y-4">
+            {currentPhaseData.habits.map((habit, index) => {
+              const HabitIcon = habit.icon;
+              const weekTotal = days.reduce((sum, _, dayIndex) => 
+                sum + getHabitStatus(habit.id, dayIndex), 0
+              );
+              
+              return (
+                <div key={habit.id} className="bg-black/50 border border-yellow-400/20 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
+                        <HabitIcon className="w-4 h-4 text-black" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm text-yellow-400 tracking-wide">{habit.name.toUpperCase()}</div>
+                        <div className="text-xs text-gray-400 font-medium">{habit.desc}</div>
+                      </div>
+                    </div>
+                    <div className={`font-black text-lg px-2 py-1 rounded-full border ${
+                      weekTotal >= 10 
+                        ? 'text-green-400 border-green-400/50 bg-green-400/10' 
+                        : 'text-yellow-400 border-yellow-400/50 bg-yellow-400/10'
+                    }`}>
+                      {weekTotal}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-7 gap-2">
+                    {days.map((day, dayIndex) => {
+                      const status = getHabitStatus(habit.id, dayIndex);
+                      return (
+                        <div key={dayIndex} className="text-center">
+                          <div className="text-xs text-yellow-400 font-bold mb-1">{day}</div>
+                          <button
+                            onClick={() => toggleHabit(habit.id, dayIndex)}
+                            className="w-8 h-8 rounded-full transition-all hover:scale-110 border border-yellow-400/30 shadow-lg hover:shadow-yellow-400/30"
+                          >
+                            {status === 0 && <Circle className="w-8 h-8 text-gray-600 hover:text-yellow-400" />}
+                            {status === 1 && <CheckCircle className="w-8 h-8 text-yellow-500 animate-pulse" />}
+                            {status === 2 && <CheckCircle className="w-8 h-8 text-green-500 drop-shadow-lg" />}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop: Table Layout */}
+          <div className="hidden sm:block overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b-2 border-yellow-400/30">
                   <th className="text-left p-4 font-black text-yellow-400 text-lg tracking-wide">DISCIPLINE</th>
-                  {days.map(day => (
+                  {fullDays.map(day => (
                     <th key={day} className="text-center p-4 font-black text-yellow-400 text-sm tracking-widest">
                       {day.toUpperCase()}
                     </th>
@@ -323,9 +359,9 @@ const BatmanHabitTracker = () => {
             </table>
           </div>
           
-          <div className="mt-6 text-center text-sm bg-black/50 rounded-lg p-4 border border-yellow-400/20">
+          <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm bg-black/50 rounded-lg p-3 sm:p-4 border border-yellow-400/20">
             <p className="text-yellow-400 font-bold mb-2">🎯 LEGEND • CÓDIGO DE OPERACIONES</p>
-            <div className="flex justify-center space-x-6 text-xs">
+            <div className="flex justify-center space-x-3 sm:space-x-6 text-xs">
               <span className="text-gray-400">⚫ PENDIENTE</span>
               <span className="text-yellow-400">🟡 COMPLETADO (1 PT)</span>
               <span className="text-green-400">🟢 EXCELENCIA (2 PTS)</span>
@@ -334,71 +370,71 @@ const BatmanHabitTracker = () => {
           </div>
         </div>
 
-        {/* Stats Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
-            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <Award className="w-8 h-8 text-black" />
+        {/* Stats Dashboard - Mobile optimized */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-6">
+          <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <Award className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
             </div>
-            <h3 className="font-black text-lg mb-2 text-yellow-400 tracking-wide">BEST WEEK</h3>
-            <p className="text-3xl font-black text-white">{stats.bestWeek}</p>
-            <p className="text-yellow-400 text-sm font-medium">POINTS</p>
+            <h3 className="font-black text-sm sm:text-lg mb-2 text-yellow-400 tracking-wide">BEST WEEK</h3>
+            <p className="text-2xl sm:text-3xl font-black text-white">{stats.bestWeek}</p>
+            <p className="text-yellow-400 text-xs sm:text-sm font-medium">POINTS</p>
           </div>
           
-          <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <TrendingUp className="w-8 h-8 text-white" />
+          <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <h3 className="font-black text-lg mb-2 text-yellow-400 tracking-wide">CURRENT</h3>
-            <p className="text-3xl font-black text-white">{progress.points}</p>
-            <p className="text-yellow-400 text-sm font-medium">POINTS</p>
+            <h3 className="font-black text-sm sm:text-lg mb-2 text-yellow-400 tracking-wide">CURRENT</h3>
+            <p className="text-2xl sm:text-3xl font-black text-white">{progress.points}</p>
+            <p className="text-yellow-400 text-xs sm:text-sm font-medium">POINTS</p>
           </div>
           
-          <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-              <Target className="w-8 h-8 text-white" />
+          <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <h3 className="font-black text-lg mb-2 text-yellow-400 tracking-wide">MISSION</h3>
-            <p className="text-3xl font-black text-white">{currentPhase}</p>
-            <p className="text-yellow-400 text-sm font-medium">OF 3</p>
+            <h3 className="font-black text-sm sm:text-lg mb-2 text-yellow-400 tracking-wide">MISSION</h3>
+            <p className="text-2xl sm:text-3xl font-black text-white">{currentPhase}</p>
+            <p className="text-yellow-400 text-xs sm:text-sm font-medium">OF 3</p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="text-center space-x-4 mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <button
             onClick={resetProgress}
-            className="px-8 py-4 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 border border-red-400/50 rounded-lg transition-all duration-300 font-black text-white shadow-lg hover:shadow-red-400/20 tracking-wide"
+            className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 border border-red-400/50 rounded-lg transition-all duration-300 font-black text-white shadow-lg hover:shadow-red-400/20 tracking-wide text-sm sm:text-base"
           >
-            <RotateCcw className="w-5 h-5 inline mr-2" />
+            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" />
             SYSTEM RESET
           </button>
         </div>
 
-        {/* Motivational Footer */}
-        <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-8 shadow-2xl shadow-yellow-400/10 relative overflow-hidden">
+        {/* Motivational Footer - Mobile optimized */}
+        <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-8 shadow-2xl shadow-yellow-400/10 relative overflow-hidden">
           {/* Background pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="text-9xl absolute top-4 left-4">🦇</div>
-            <div className="text-6xl absolute bottom-4 right-4">⚡</div>
+            <div className="text-6xl sm:text-9xl absolute top-2 sm:top-4 left-2 sm:left-4">🦇</div>
+            <div className="text-4xl sm:text-6xl absolute bottom-2 sm:bottom-4 right-2 sm:right-4">⚡</div>
           </div>
           
           <div className="text-center relative z-10">
-            <h4 className="text-2xl font-black text-yellow-400 mb-4 tracking-widest">
+            <h4 className="text-lg sm:text-2xl font-black text-yellow-400 mb-3 sm:mb-4 tracking-widest">
               🎯 WAYNE ENTERPRISES PROTOCOL
             </h4>
-            <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-6 mb-4">
-              <p className="text-lg font-bold text-yellow-400 mb-2">
+            <div className="bg-yellow-400/10 border border-yellow-400/30 rounded-lg p-4 sm:p-6 mb-3 sm:mb-4">
+              <p className="text-sm sm:text-lg font-bold text-yellow-400 mb-2">
                 "The discipline between who you want to be and who you are now."
               </p>
-              <p className="text-gray-300 font-medium">
+              <p className="text-gray-300 font-medium text-sm sm:text-base">
                 Each completed habit brings you closer to your Batman version.
                 <br />
                 <span className="text-yellow-400">Excellence is not an act, but a habit.</span>
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm">
               <div className="bg-black/50 border border-yellow-400/20 rounded-lg p-3">
                 <div className="font-bold text-yellow-400">🏃‍♂️ PHYSICAL</div>
                 <div className="text-gray-400">Body is the weapon</div>
