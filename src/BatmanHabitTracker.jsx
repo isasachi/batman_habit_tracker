@@ -52,7 +52,7 @@ const BatmanHabitTracker = () => {
   };
 
   const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-  const fullDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sab', 'Dom'];
+  const fullDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
 
   const getWeekKey = () => `phase${currentPhase}-week${currentWeek}`;
   
@@ -155,11 +155,11 @@ const BatmanHabitTracker = () => {
         <div className="text-center mb-6 sm:mb-8 relative">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent h-px top-1/2"></div>
           <h1 className="text-3xl sm:text-5xl font-bold mb-4 relative">
-            <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent font-black tracking-wider">
+            <span className="text-yellow-400 font-black tracking-wider drop-shadow-lg">
               ⚡ BATMAN ⚡
             </span>
             <br />
-            <span className="text-lg sm:text-2xl bg-gradient-to-r from-gray-300 to-gray-500 bg-clip-text text-transparent font-light tracking-widest">
+            <span className="text-lg sm:text-2xl text-gray-300 font-light tracking-widest">
               HABIT PROTOCOL
             </span>
           </h1>
@@ -179,10 +179,10 @@ const BatmanHabitTracker = () => {
           <div className="flex items-center justify-between mb-4">
             <button 
               onClick={prevWeek}
-              className="p-2 sm:p-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-yellow-400/20 hover:to-yellow-600/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg hover:shadow-yellow-400/20 text-xs sm:text-sm"
+              className="p-2 sm:p-3 bg-gray-800 hover:bg-yellow-400/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg text-xs sm:text-sm min-w-[40px] flex items-center justify-center"
               disabled={currentPhase === 1 && currentWeek === 1}
             >
-              <ChevronLeft className="w-4 h-4 sm:hidden" />
+              <span className="sm:hidden text-lg">‹</span>
               <span className="hidden sm:inline">◀ PREV</span>
             </button>
             
@@ -198,10 +198,10 @@ const BatmanHabitTracker = () => {
             
             <button 
               onClick={nextWeek}
-              className="p-2 sm:p-3 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-yellow-400/20 hover:to-yellow-600/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg hover:shadow-yellow-400/20 text-xs sm:text-sm"
+              className="p-2 sm:p-3 bg-gray-800 hover:bg-yellow-400/20 border border-yellow-400/30 rounded-lg transition-all duration-300 font-bold text-yellow-400 shadow-lg text-xs sm:text-sm min-w-[40px] flex items-center justify-center"
               disabled={currentPhase === 3 && currentWeek === 4}
             >
-              <ChevronRight className="w-4 h-4 sm:hidden" />
+              <span className="sm:hidden text-lg">›</span>
               <span className="hidden sm:inline">NEXT ▶</span>
             </button>
           </div>
@@ -254,15 +254,25 @@ const BatmanHabitTracker = () => {
                 <div key={habit.id} className="bg-black/50 border border-yellow-400/20 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
-                        <HabitIcon className="w-4 h-4 text-black" />
+                      <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                        <span className="text-black font-bold text-xs">
+                          {habit.id === 'physical' && '💪'}
+                          {habit.id === 'mental' && '📚'}
+                          {habit.id === 'discipline' && '🎯'}
+                          {habit.id === 'observation' && '👁'}
+                          {habit.id === 'strategic' && '🧠'}
+                          {habit.id === 'social' && '👥'}
+                          {habit.id === 'morning' && '🌅'}
+                          {habit.id === 'afternoon' && '☀️'}
+                          {habit.id === 'evening' && '🌙'}
+                        </span>
                       </div>
-                      <div>
-                        <div className="font-bold text-sm text-yellow-400 tracking-wide">{habit.name.toUpperCase()}</div>
-                        <div className="text-xs text-gray-400 font-medium">{habit.desc}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="font-bold text-sm text-yellow-400 tracking-wide truncate">{habit.name.toUpperCase()}</div>
+                        <div className="text-xs text-gray-400 font-medium line-clamp-2">{habit.desc}</div>
                       </div>
                     </div>
-                    <div className={`font-black text-lg px-2 py-1 rounded-full border ${
+                    <div className={`font-black text-lg px-2 py-1 rounded-full border flex-shrink-0 ${
                       weekTotal >= 10 
                         ? 'text-green-400 border-green-400/50 bg-green-400/10' 
                         : 'text-yellow-400 border-yellow-400/50 bg-yellow-400/10'
@@ -279,11 +289,11 @@ const BatmanHabitTracker = () => {
                           <div className="text-xs text-yellow-400 font-bold mb-1">{day}</div>
                           <button
                             onClick={() => toggleHabit(habit.id, dayIndex)}
-                            className="w-8 h-8 rounded-full transition-all hover:scale-110 border border-yellow-400/30 shadow-lg hover:shadow-yellow-400/30"
+                            className="w-8 h-8 rounded-full transition-all border border-yellow-400/30 shadow-lg flex items-center justify-center text-lg"
                           >
-                            {status === 0 && <Circle className="w-8 h-8 text-gray-600 hover:text-yellow-400" />}
-                            {status === 1 && <CheckCircle className="w-8 h-8 text-yellow-500 animate-pulse" />}
-                            {status === 2 && <CheckCircle className="w-8 h-8 text-green-500 drop-shadow-lg" />}
+                            {status === 0 && <span className="text-gray-600">○</span>}
+                            {status === 1 && <span className="text-yellow-500">●</span>}
+                            {status === 2 && <span className="text-green-500">✓</span>}
                           </button>
                         </div>
                       );
@@ -319,8 +329,18 @@ const BatmanHabitTracker = () => {
                     <tr key={habit.id} className="border-t border-yellow-400/20 hover:bg-yellow-400/5 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-lg">
-                            <HabitIcon className="w-5 h-5 text-black" />
+                          <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                            <span className="text-black font-bold text-sm">
+                              {habit.id === 'physical' && '💪'}
+                              {habit.id === 'mental' && '📚'}
+                              {habit.id === 'discipline' && '🎯'}
+                              {habit.id === 'observation' && '👁'}
+                              {habit.id === 'strategic' && '🧠'}
+                              {habit.id === 'social' && '👥'}
+                              {habit.id === 'morning' && '🌅'}
+                              {habit.id === 'afternoon' && '☀️'}
+                              {habit.id === 'evening' && '🌙'}
+                            </span>
                           </div>
                           <div>
                             <div className="font-bold text-lg text-yellow-400 tracking-wide">{habit.name.toUpperCase()}</div>
@@ -334,11 +354,11 @@ const BatmanHabitTracker = () => {
                           <td key={dayIndex} className="p-4 text-center">
                             <button
                               onClick={() => toggleHabit(habit.id, dayIndex)}
-                              className="w-10 h-10 rounded-full transition-all hover:scale-110 border-2 border-yellow-400/30 shadow-lg hover:shadow-yellow-400/30"
+                              className="w-10 h-10 rounded-full transition-all border-2 border-yellow-400/30 shadow-lg flex items-center justify-center text-xl"
                             >
-                              {status === 0 && <Circle className="w-10 h-10 text-gray-600 hover:text-yellow-400" />}
-                              {status === 1 && <CheckCircle className="w-10 h-10 text-yellow-500 animate-pulse" />}
-                              {status === 2 && <CheckCircle className="w-10 h-10 text-green-500 drop-shadow-lg" />}
+                              {status === 0 && <span className="text-gray-600">○</span>}
+                              {status === 1 && <span className="text-yellow-500">●</span>}
+                              {status === 2 && <span className="text-green-500">✓</span>}
                             </button>
                           </td>
                         );
@@ -373,8 +393,8 @@ const BatmanHabitTracker = () => {
         {/* Stats Dashboard - Mobile optimized */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-6">
           <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
-              <Award className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <span className="text-black font-bold text-xl sm:text-2xl">🏆</span>
             </div>
             <h3 className="font-black text-sm sm:text-lg mb-2 text-yellow-400 tracking-wide">BEST WEEK</h3>
             <p className="text-2xl sm:text-3xl font-black text-white">{stats.bestWeek}</p>
@@ -382,8 +402,8 @@ const BatmanHabitTracker = () => {
           </div>
           
           <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
-              <TrendingUp className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <span className="text-white font-bold text-xl sm:text-2xl">📈</span>
             </div>
             <h3 className="font-black text-sm sm:text-lg mb-2 text-yellow-400 tracking-wide">CURRENT</h3>
             <p className="text-2xl sm:text-3xl font-black text-white">{progress.points}</p>
@@ -391,8 +411,8 @@ const BatmanHabitTracker = () => {
           </div>
           
           <div className="bg-black/90 border-2 border-yellow-400/50 rounded-xl p-4 sm:p-6 backdrop-blur-sm text-center shadow-2xl shadow-yellow-400/10 hover:shadow-yellow-400/20 transition-shadow">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
-              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-green-400 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg">
+              <span className="text-white font-bold text-xl sm:text-2xl">🎯</span>
             </div>
             <h3 className="font-black text-sm sm:text-lg mb-2 text-yellow-400 tracking-wide">MISSION</h3>
             <p className="text-2xl sm:text-3xl font-black text-white">{currentPhase}</p>
@@ -404,9 +424,9 @@ const BatmanHabitTracker = () => {
         <div className="text-center mb-6 sm:mb-8">
           <button
             onClick={resetProgress}
-            className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 border border-red-400/50 rounded-lg transition-all duration-300 font-black text-white shadow-lg hover:shadow-red-400/20 tracking-wide text-sm sm:text-base"
+            className="px-6 sm:px-8 py-3 sm:py-4 bg-red-600 hover:bg-red-700 border border-red-400/50 rounded-lg transition-all duration-300 font-black text-white shadow-lg tracking-wide text-sm sm:text-base"
           >
-            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" />
+            <span className="inline-block mr-2">🔄</span>
             SYSTEM RESET
           </button>
         </div>
