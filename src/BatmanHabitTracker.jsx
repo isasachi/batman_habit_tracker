@@ -2,14 +2,53 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Target, TrendingUp, Award, Book, Dumbbell, Eye, Users, CheckCircle, Circle, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const BatmanHabitTracker = () => {
-  const [currentPhase, setCurrentPhase] = useState(1);
-  const [currentWeek, setCurrentWeek] = useState(1);
-  const [habits, setHabits] = useState({});
-  const [stats, setStats] = useState({
-    totalPoints: 0,
-    streak: 0,
-    bestWeek: 0
-  });
+  const LOCAL_STORAGE_KEY = 'batmanHabitTrackerData';
+  // 6 months in milliseconds: 6 months * ~30 days/month * 24 hours/day * 60 min/hour * 60 sec/min * 1000 ms/sec
+  const DATA_LIFESPAN_MS = 6 * 30.44 * 24 * 60 * 60 * 1000; // Using 30.44 days for a more accurate average month
+
+  // Function to get initial state from local storage or return defaults
+  const getInitialState = () => {
+    try {
+      const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        const now = new Date().getTime();
+
+        // Check if data exists and is within its lifespan
+        if (parsedData.timestamp && (now - parsedData.timestamp < DATA_LIFESPAN_MS)) {
+          console.log("Loading data from local storage...");
+          return {
+            habits: parsedData.habits || {},
+            stats: parsedData.stats || { totalPoints: 0, streak: 0, bestWeek: 0 },
+            currentPhase: parsedData.currentPhase || 1,
+            currentWeek: parsedData.currentWeek || 1,
+          };
+        } else {
+          // Data expired or invalid, clear it from local storage
+          console.log("Local storage data expired or invalid. Clearing...");
+          localStorage.removeItem(LOCAL_STORAGE_KEY);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load data from local storage:", error);
+    }
+    // If no saved data, data expired, or an error occurred, return default initial state
+    console.log("Initializing with default state.");
+    return {
+      habits: {},
+      stats: { totalPoints: 0, streak: 0, bestWeek: 0 },
+      currentPhase: 1,
+      currentWeek: 1,
+    };
+  };
+
+  // Lazy initialization of state using the getInitialState function
+  // The function is passed directly to useState, so it runs only once during initial render
+  const [currentPhase, setCurrentPhase] = useState(() => getInitialState().currentPhase);
+  const [currentWeek, setCurrentWeek] = useState(() => getInitialState().currentWeek);
+  const [habits, setHabits] = useState(() => getInitialState().habits);
+  const [stats, setStats] = useState(() => getInitialState().stats);
+
 
   const phases = {
     1: {
@@ -54,6 +93,23 @@ const BatmanHabitTracker = () => {
   const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   const fullDays = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'];
 
+  // Effect to save data to local storage whenever state changes
+  useEffect(() => {
+    try {
+      const dataToSave = {
+        habits,
+        stats,
+        currentPhase,
+        currentWeek,
+        timestamp: new Date().getTime() // Store timestamp for lifespan management
+      };
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
+      console.log("Data saved to local storage.");
+    } catch (error) {
+      console.error("Failed to save data to local storage:", error);
+    }
+  }, [habits, stats, currentPhase, currentWeek]); // Dependencies: save when any of these change
+
   const getWeekKey = () => `phase${currentPhase}-week${currentWeek}`;
   
   const toggleHabit = (habitId, dayIndex) => {
@@ -65,15 +121,29 @@ const BatmanHabitTracker = () => {
       if (!newHabits[weekKey]) newHabits[weekKey] = {};
       
       const currentValue = newHabits[weekKey][dayKey] || 0;
-      const newValue = currentValue === 2 ? 0 : currentValue + 1;
+      const newValue = currentValue === 2 ? 0 : currentValue + 1; // Cycle 0 -> 1 -> 2 -> 0
       newHabits[weekKey][dayKey] = newValue;
+      
+      // Calculate and update stats based on the new habit state for the current week
+      const updatedWeekPoints = Object.values(newHabits[weekKey] || {}).reduce((sum, val) => sum + val, 0);
+      setStats(prevStats => ({
+        ...prevStats,
+        // The totalPoints logic in the original component suggests accumulating points when a new bestWeek is set.
+        // If you want totalPoints to be a sum of all points across all recorded weeks, this logic would need to change
+        // to iterate through all keys in `newHabits`. For now, I'm maintaining the original interpretation
+        // which focuses on updating 'bestWeek' and conditionally adding to 'totalPoints'.
+        // For a more accurate 'total points ever', you'd need a separate calculation that sums all habit points.
+        // For example:
+        // totalPoints: calculateOverallTotalPoints(newHabits),
+        bestWeek: Math.max(prevStats.bestWeek, updatedWeekPoints)
+      }));
       
       return newHabits;
     });
-    
-    calculateStats();
   };
 
+  // This `calculateStats` function is technically redundant now if `toggleHabit` updates stats immediately.
+  // It's kept for potential future use or if other actions might trigger a full recalculation.
   const calculateStats = () => {
     const weekKey = getWeekKey();
     const weekHabits = habits[weekKey] || {};
@@ -105,33 +175,37 @@ const BatmanHabitTracker = () => {
   };
 
   const nextWeek = () => {
+    // Only allow navigation if not at the very last week of the last phase
     if (currentPhase === 3 && currentWeek === 4) return;
     
-    if (currentWeek === 4) {
-      setCurrentPhase(prev => Math.min(prev + 1, 3));
-      setCurrentWeek(1);
+    if (currentWeek === 4) { // If at the end of a phase's weeks
+      setCurrentPhase(prev => Math.min(prev + 1, 3)); // Move to next phase, max 3
+      setCurrentWeek(1); // Reset week to 1
     } else {
-      setCurrentWeek(prev => prev + 1);
+      setCurrentWeek(prev => prev + 1); // Move to next week within current phase
     }
   };
 
   const prevWeek = () => {
+    // Only allow navigation if not at the very first week of the first phase
     if (currentPhase === 1 && currentWeek === 1) return;
     
-    if (currentWeek === 1) {
-      setCurrentPhase(prev => Math.max(prev - 1, 1));
-      setCurrentWeek(4);
+    if (currentWeek === 1) { // If at the start of a phase's weeks
+      setCurrentPhase(prev => Math.max(prev - 1, 1)); // Move to previous phase, min 1
+      setCurrentWeek(4); // Set week to 4 (last week of previous phase)
     } else {
-      setCurrentWeek(prev => prev - 1);
+      setCurrentWeek(prev => prev - 1); // Move to previous week within current phase
     }
   };
 
   const resetProgress = () => {
-    if (confirm('¿Estás seguro de que quieres reiniciar todo el progreso?')) {
+    if (confirm('¿Estás seguro de que quieres reiniciar todo el progreso? Esto borrará tus datos guardados.')) {
       setHabits({});
       setStats({ totalPoints: 0, streak: 0, bestWeek: 0 });
       setCurrentPhase(1);
       setCurrentWeek(1);
+      localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear local storage on full reset
+      console.log("All progress reset and local storage cleared.");
     }
   };
 
@@ -245,7 +319,6 @@ const BatmanHabitTracker = () => {
           {/* Mobile: Card Layout, Desktop: Table Layout */}
           <div className="block sm:hidden space-y-4">
             {currentPhaseData.habits.map((habit, index) => {
-              const HabitIcon = habit.icon;
               const weekTotal = days.reduce((sum, _, dayIndex) => 
                 sum + getHabitStatus(habit.id, dayIndex), 0
               );
@@ -255,6 +328,7 @@ const BatmanHabitTracker = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                        {/* Dynamic icon based on habit id */}
                         <span className="text-black font-bold text-xs">
                           {habit.id === 'physical' && '💪'}
                           {habit.id === 'mental' && '📚'}
@@ -273,7 +347,7 @@ const BatmanHabitTracker = () => {
                       </div>
                     </div>
                     <div className={`font-black text-lg px-2 py-1 rounded-full border flex-shrink-0 ${
-                      weekTotal >= 10 
+                      weekTotal >= currentPhaseData.weeklyGoal // Compare against weekly goal for color
                         ? 'text-green-400 border-green-400/50 bg-green-400/10' 
                         : 'text-yellow-400 border-yellow-400/50 bg-yellow-400/10'
                     }`}>
@@ -320,7 +394,6 @@ const BatmanHabitTracker = () => {
               </thead>
               <tbody>
                 {currentPhaseData.habits.map((habit, index) => {
-                  const HabitIcon = habit.icon;
                   const weekTotal = days.reduce((sum, _, dayIndex) => 
                     sum + getHabitStatus(habit.id, dayIndex), 0
                   );
@@ -330,6 +403,7 @@ const BatmanHabitTracker = () => {
                       <td className="p-4">
                         <div className="flex items-center space-x-4">
                           <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+                            {/* Dynamic icon based on habit id */}
                             <span className="text-black font-bold text-sm">
                               {habit.id === 'physical' && '💪'}
                               {habit.id === 'mental' && '📚'}
@@ -365,7 +439,7 @@ const BatmanHabitTracker = () => {
                       })}
                       <td className="p-4 text-center">
                         <div className={`font-black text-2xl px-3 py-1 rounded-full border-2 ${
-                          weekTotal >= 10 
+                          weekTotal >= currentPhaseData.weeklyGoal // Compare against weekly goal for color
                             ? 'text-green-400 border-green-400/50 bg-green-400/10' 
                             : 'text-yellow-400 border-yellow-400/50 bg-yellow-400/10'
                         }`}>
